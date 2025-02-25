@@ -107,7 +107,7 @@ All numerical features in this dataset represent discrete values. As such correl
 
 SOCs demand very high F1 scores before an action further can be undertaken by automation or human intervention. The goal is to catch as many real events (requiring high precision), and not miss any real attack (high recall i.e. reduce false negatives). 
 
-The macro F1 scores of 69% for True Positives (TP), and 60% for False Positives (FP) would not be considered high in SOC environments. Further more the top 10 contributing features, do not explain more than 50% of the target variable prediction. 
+The macro F1 scores of 69% for True Positives (TP), and 60% for False Positives (FP) would not be considered high in SOC environments where thresholds would be aruond 90%. Further more the top 10 contributing features, do not explain more than 50% of the variance seen in the target variable. 
 
 Futher work is needed to achieve higher F1 scores before it may be considered for deployment in a SOC and perhaps identifying additional features that may help make a better fitting model.
 
