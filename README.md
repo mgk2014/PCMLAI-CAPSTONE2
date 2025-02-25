@@ -18,7 +18,7 @@ More information on how this data was prepared, how alerts were corelated into i
 
 ### Jupyter Notebook
 
-https://github.com/mgk2014/PCMLAI-capstone/blob/main/xdr.ipynb
+https://github.com/mgk2014/PCMLAI-CAPSTONE2/blob/main/xdr.ipynb
 
 ### Data Cleaning and Feature Engineering
 
