@@ -14,7 +14,7 @@ Considering that businesses that rely on 24x7 connectivity, a business impact du
 
 The original data set comprises of 13 million pieces of evidence across 33 entity types, covering 1.6 million alerts and 1 million annotated incidents with triage labels from customers over a two-week period. The dataset is built from telemetry from 6100 organizations, using 9100 unique detectors. All data was anonymized. The data is available on Kaggle at https://www.kaggle.com/datasets/Microsoft/microsoft-security-incident-prediction
 
-More information on how this data was prepared, how alerts were corelated into incidents can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of this initiative was much larger - to corelate events, triage prediction and remediation action prediction. The focus of this analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the IncidentLevel. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
+More information on how this data was prepared, how alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of this initiative was much larger - to corelate events, triage prediction and remediation action prediction. The focus of this analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the IncidentLevel. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
 
 ### Jupyter Notebook
 
@@ -62,7 +62,9 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 ### Model development
 
-- Ran 4 classifiers with default parameters. Macro Precision, Recall, and F1 scores were used (since this is multiclass) and are recorded in this table
+- Ran Logistic Regression, KNN, DecisionTree, SVM, Random Forest and GradientBoosting classifiers with default parameters. LR and SVM executed on smaller data sets but took a long time with the dataset size chosen for this analysis. These classifiers were subsequently removed in the final analysis.
+
+- For KNN, Dt, RF and Gradient Boosting classifers - Macro Precision, Recall, and F1 scores are recorded in this table
     
     <img src="plots/default-classifiers.png" alt="Default Classifiers" width="600">
 
