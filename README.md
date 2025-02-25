@@ -51,11 +51,13 @@ T1566 (Phishing) and T1078 (valid accounts) MitreTechniques were the most common
 
 <img src="plots/FirstMitreTechniqueByIncidentGrade.png" alt="Detectors by Incident Grade" width="500">
 
-Majority of evidence for alerts are related to IP and user information
+Majority of are related to IP and user entities
 
 <img src="plots/EntityTypeDistribution.png" alt="Entity Types" width="500">
 
-All numerical features in this dataset represent discrete values. As such correlation/heatmaps plots were not considered useful. 
+All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId. This will be removed in the 2nd pass of the analysis
+
+<img src="plots/m_numerical_heatmap.png" alt="Entity Types" width="400">
 
 
 ### Model development
@@ -115,6 +117,7 @@ Futher work is needed to achieve higher F1 scores before it may be considered fo
 
 - Investigage the data acquisition pipeline, and explore whether any additional features could have been included in the data set
 - Exploring engineering additional features from the available set of features
-- Increase the size of data set used in the evaluation
+- Remove highly correlated features such as AccountsId, AccountName that are corrrelated to AccountObjectId, and FileName that is correlated to hash SHA256
+- Increase the size of data set used in the evaluation to capture more variation and perhaps increase the feature contribution to the target variable
 - Further fine tune the hyper paremeters for the Random Forest
-- Explore other models, such as AdaBoost or DeepLearning techniques
+- Explore other models, such as AdaBoost or DeepLearning
