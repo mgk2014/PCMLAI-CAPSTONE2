@@ -122,4 +122,5 @@ Futher work is needed to achieve higher F1 scores before it may be considered fo
 - Remove highly correlated features such as AccountsId, AccountName that are corrrelated to AccountObjectId, and FileName that is correlated to hash SHA256
 - Increase the size of data set used in the evaluation to capture more variation and perhaps increase the feature contribution to the target variable
 - Further fine tune the hyper paremeters for the Random Forest
-- Explore other models, such as AdaBoost or DeepLearning
+- Explore other models, such as AdaBoost or DeepLearning, and diving back into SVM, LR using better compute resources
+
