@@ -1,12 +1,12 @@
 # PCMLAI-capstone
 
-### CyberSecurity ground truth prediction
+### CyberSecurity XDR Alert and Incident Grade prediction
 
 In the evolving cybersecurity landscape, the increase in threat actors has overwhelmed enterprise security operation centers (SOCs) with incidents. This situation necessitates solutions for immediately classifying threats and triggering a remediation process. However, fully automated systems require a very high confidence threshold to avoid errors due to automated actions, making them often impractical. As a result, SOCs consider building guided response (GR) systems that aid analysts in making informed decisions. These guided response systems require a triaged threat assessment that is then prioritized and fed for further review and action by a SOC analyst.
 
 ### Objective
 
-The primary objective of the exercise is to accurately predict alerts and incidents triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging labeled responses from SOCs of existing customers. 
+The primary objective of the exercise is to accurately predict alert and incident triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging labeled responses from SOCs of existing customers. 
 
 Considering that businesses that rely on 24x7 connectivity, a business impact due to mis-handling of alerts/incidents (either ignored, or bring down services in response to ones that did not need it) could be huge. As such high precision and a high recall is desired on the TP, FP and BP classifications.
 
