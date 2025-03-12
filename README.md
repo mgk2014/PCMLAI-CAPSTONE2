@@ -25,11 +25,11 @@ https://github.com/mgk2014/PCMLAI-CAPSTONE2/blob/main/xdr.ipynb
 
 The following steps were taken to clean the data and engineer new features:
 
-- Choose random sample of equal number of BP, TP and FP samples (50k each) for both train and test data sets, from a 500k sample of the train and test data set. The original distribution is about BP(43%), TP(35%), FP(22%). The stratified data set helped improve the Precision and Recall scores
+- Chose random sample of equal number of BP, TP and FP samples (50k each) for both train and test data sets, from a 500k sample of the train and test data set. The original distribution is about BP(43%), TP(35%), FP(22%). The stratified data set helped improve the Precision and Recall scores
 - Ignored the extra usage feature in the test dataset that was not found in the training (more information is needed to clarify the role of this feature)
 - Deleted the features that had more than 90% values missing: ResourceType, ThreatFamily, EmailClusterId, Roles, AntispamDirection
 - ActionGrouped, ActionGranular are related to action recommendations post the initial triage. Since this analysis is restricted to triage, these features were dropped
-- Timestamp was converted to Timestamp data type. This feature was not immediately use in the analysis, but may be used for forecasting of alerts
+- Timestamp was converted to Timestamp data type. This feature was not immediately used in the analysis, but may be used for forecasting of alerts
 - MitreTechniques feature was abstracted to the high leave Mitre such as T1078 (account access), ignoring the sub MitreTechniques (ex: T1078.001, T1078.002) recorded in the alerts. Sub Mitres may be included in further analysis if Mitre is found to be an important feature in the analsys
 - Geo Features such as Country, State were removed in favor of  City feature since City represented by anonymous code 10630 represeted > 99% of the data 
 
@@ -56,14 +56,14 @@ Majority of are related to IP and user entities
 
 <img src="plots/EntityTypeDistribution.png" alt="Entity Types" width="500">
 
-All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId. This will be removed in the 2nd pass of the analysis
+All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId. This were removed before developing the model
 
 <img src="plots/m_numerical_heatmap.png" alt="Entity Types" width="400">
 
 
 ### Model development
 
-- Ran Logistic Regression, KNN, DecisionTree, SVM, Random Forest and GradientBoosting classifiers with default parameters. LR and SVM executed on smaller data sets but took a long time with the dataset size chosen for this analysis. These classifiers were subsequently removed in the final analysis.
+- Ran Logistic Regression, KNN, DecisionTree, SVM, Random Forest and GradientBoosting classifiers with default parameters. LR and SVM executed on smaller data sets (10k rows) but took a long time (> 9-10 hrs) with the 150K train dataset size chosen for this analysis. With the smaller data sets, SVM, LR did not improve upon the scores of the RF classifier. Subsquently, SVM, RF classifiers were removed in the final analysis.
 
 - For KNN, Dt, RF and Gradient Boosting classifers - Macro Precision, Recall, and F1 scores are recorded in this table
     
@@ -73,17 +73,17 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - DecisionTree and RandomForestClassifier registered the highest macro F1 scores. The DecisionTree classifier was the fastest to fit and evaluate. However the default DecisionTree fitted to a depth of 86 indicating over fitting
 
-- Leveraged GridSearchCV to find optimal hyper parameters on DecisionTree and RandomForest classifiers. Random Forest classifier results are shown below (DT results are in the Jupyter notebook)
+- Leveraged GridSearchCV to find optimal hyper parameters on DecisionTree and RandomForest classifiers. RF classifier results are shown below (DT results are in the linked Jupyter notebook)
 
 #### Random Forest Classifier
 
 - Following parameters were used to further train RandomForest model. This resulted in fitting of 250 models
     
-    rf_grid_params = {'n_estimators': [50, 100, 150, 300], 'min_samples_split': [0.1, 0.01, 0.001],'oob_score': [True, False]'max_features': ['sqrt', 'log2'],
+    rf_grid_params = {'n_estimators': [100, 200, 300],'max_depth': [30, 50, 75],'min_samples_split': [5, 10, 15],'class_weight': ['balanced', None]}
 
 - Best parameters returned by GridSearch Cross Validation:
 
-    {'max_features': 'sqrt','min_samples_split': 0.001, 'n_estimators': 50,'oob_score': True}
+    {'class_weight': 'balanced','max_depth': 30,'min_samples_split': 5,'n_estimators': 200}
 
 - Classification report
 
@@ -103,7 +103,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - Further exploration was done with Randomized Search CV (50 models) and restriction the model to top contributing features. The final Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
 
-- To help understand the contribution of various features to a single prediction, 'treeinterpreter' and 'waterfall' libraries were used. Here it predicts TP for a single alert by producing three different scores for BP, FP and TP [[0.34563431 0.07359429 0.5807714 ]], thus predicting the majority class
+- To help understand the contribution of various features to a single prediction, 'treeinterpreter' and 'waterfall' libraries were used. Here it predicts TP for a single alert by producing three different scores for BP, FP and TP [[0.18675794 0.03887698 0.77436508]], thus predicting the majority class
 
     <img src="plots/featurecontributionofprediction.png" alt="Top 10 features" width="500">
 
