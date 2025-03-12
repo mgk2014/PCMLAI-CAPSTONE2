@@ -112,7 +112,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 SOCs demand very high F1 scores before an action further can be undertaken by automation or human intervention. The goal is to catch as many real events (requiring high precision), and not miss any real attack (high recall i.e. reduce false negatives). 
 
-The macro F1 scores of 69% for True Positives (TP), and 60% for False Positives (FP) would not be considered high in SOC environments where thresholds would be aruond 90%. Further more the top 10 contributing features, do not explain more than 50% of the variance seen in the target variable. Also i am not sure why IPAddress is being marked as one of the top contributing feature. This will make the deployment of such a model complicated as IP addresses may change or new devices may get added in that may require constant revisions to the model.
+The macro F1 scores of 71% for True Positives (TP), 64% for False Positives (FP), 68% for Benign Positives (BP) would not be considered high in SOC environments where thresholds would be aruond 90%. Further more the top 10 contributing features, do not explain more than 50% of the variance seen in the target variable. Also i am not sure why IPAddress is being marked as one of the top contributing feature. This will make the deployment of such a model complicated as IP addresses may change or new devices may get added in that may require constant revisions to the model.
 
 Futher work is needed to achieve higher F1 scores before it may be considered for deployment in a SOC and perhaps identifying additional features that may help make a better fitting model.
 
@@ -120,8 +120,7 @@ Futher work is needed to achieve higher F1 scores before it may be considered fo
 
 - Investigage the data acquisition pipeline, and explore whether any additional features could have been included in the data set
 - Exploring engineering additional features from the available set of features
-- Explore sequential model building - convert the 3 classes into a binary classification problem (TP and Not TP) and evaluate if that improves results
-- Remove highly correlated features such as AccountsId, AccountName that are corrrelated to AccountObjectId, and FileName that is correlated to hash SHA256
+- Explore sequential model building - convert the 3 classes into a binary classification problem (TP and Not TP) and evaluate if that improves results for TP. If it does, a 2nd model can be built that predicts for FP vs BP.
 - Increase the size of data set used in the evaluation to capture more variation and perhaps increase the feature contribution to the target variable
 - Further fine tune the hyper paremeters for the Random Forest
 - Explore other models, such as AdaBoost or DeepLearning, and diving back into SVM, LR using better compute resources
