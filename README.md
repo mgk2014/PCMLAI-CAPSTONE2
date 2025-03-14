@@ -14,7 +14,7 @@ Considering that businesses that rely on 24x7 connectivity, a business impact du
 
 The original data set comprises of 13 million pieces of evidence across 33 entity types, covering 1.6 million alerts and 1 million annotated incidents with triage labels from customers over a two-week period. The dataset is built from telemetry from 6100 organizations, using 9100 unique detectors. All data was anonymized. The data is available on Kaggle at https://www.kaggle.com/datasets/Microsoft/microsoft-security-incident-prediction
 
-More information on how this data was prepared, alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of the initiative was much larger - co-relate alerts into incidents events, predict triage grades predict a remediation action and suggest similar incidents. The focus of my analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the incident level. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
+More information on how this data was prepared, alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of the initiative was much larger - co-relate alerts into incidents, predict triage grades, predict remediation action and suggest similar incidents. The focus of my analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the incident level. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
 
 ### Jupyter Notebook
 
@@ -43,8 +43,7 @@ The LastVerdict column was populated only in 20% of all alerts. There were quite
 
 <img src="plots/LastVerdictByIncidentGrade.png" alt="Last Verdict by Incident Grade" width="500">
 
-"DetectorId 0" typically refers to a generic or default detection mechanism, meaning it signifies an alert triggered by a broad security
-rule that isn't specifically tied to a particular security feature. Quite a few alerts were tagged to Detector 0, perhaps suggesting exploration of more specifical rules for future alerts
+"DetectorId 0" typically refers to a generic or default detection mechanism, meaning it signifies an alert triggered by a broad securityrule that isn't specifically tied to a particular security feature. Quite a few alerts were tagged to Detector 0, perhaps suggesting exploration of more specifical rules for future alerts
 
 <img src="plots/DetectorByIncidentGrade.png" alt="Detectors by Incident Grade" width="500">
 
@@ -52,11 +51,11 @@ T1566 (Phishing) and T1078 (valid accounts) MitreTechniques were the most common
 
 <img src="plots/FirstMitreTechniqueByIncidentGrade.png" alt="Detectors by Incident Grade" width="500">
 
-Majority of are related to IP and user entities
+Majority of alerts are related to IP and user entities
 
 <img src="plots/EntityTypeDistribution.png" alt="Entity Types" width="500">
 
-All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId, AccountUps. Except AccountsId, these other co-related features removed before developing the model
+All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId, AccountUps. Except AccountsId, these co-related features removed before developing the model
 
 <img src="plots/m_numerical_heatmap.png" alt="Entity Types" width="400">
 
@@ -105,14 +104,14 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - Further exploration was done with Randomized Search CV (validated 50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
 
-- To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it shows the contribution of each feature in prediction for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive, in this example.
+- To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it shows the contribution of features in prediction for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive, in this example.
 
     <img src="plots/featurecontributionofprediction.png" alt="Top 10 features" width="500">
 
 
 ### Conclusion
 
-SOCs requirements for high confidence predictions translate to high F1 (function of Precision and Recall) scores before an action may be undertaken through automation or by humans. The goal is to catch as many real events (requiring high precision), and not miss any real attacks (high recall i.e. reduce false negatives). In the current model, macro F1 scores of 71% for True Positives (TP), 64% for False Positives (FP), 68% for Benign Positives (BP), and Area Under Curve (67-73%) would not be considered high enough, and may require additional triage before an action is taken or suggested.
+SOC's requirements for high confidence predictions translate to high F1 (function of Precision and Recall) scores before an action may be undertaken through automation or by humans. The goal is to catch as many real events (requiring high precision), and not miss any real attacks (high recall i.e. reduce false negatives). In the current model, macro F1 scores of 71% for True Positives (TP), 64% for False Positives (FP), 68% for Benign Positives (BP), and Area Under Curve (67-73%) would not be considered high enough, and may require additional triage before an action is taken or suggested.
 
 The model also considers account information, ip address, network message Id, url, and device name as top contributing features i.e. the features that have the most impact on determining whether an alert should be marked as TP, FP or BP. While this is intuitive based on the labeled data and sources/destination of threats, it also suggests the deployment of this model will require periodic re-fit, based on introduction of new devices or services. Additional discussions are needed with an SME to understand the life-cycle processes within a SOC for new user/device life-cycle &  cloud based services.
 
