@@ -97,7 +97,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
     <img src="plots/Top10Features.png" alt="Top 10 features" width="600">
 
-- Further exploration was done with Randomized Search CV (50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
+- Further exploration was done with Randomized Search CV (50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were slightly lower that what is shared here, however the ROC-AUC curves improved with an RF classifier with top 10 features only. The details are in the linked Jupyter notebook.
 
 - To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it shows the contribution of features in prediction for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive, in this example.
 
