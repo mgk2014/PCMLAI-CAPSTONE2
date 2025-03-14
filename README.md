@@ -16,11 +16,6 @@ The original data set comprises of 13 million pieces of evidence across 33 entit
 
 More information on how this data was prepared, alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of the initiative was much larger - co-relate alerts into incidents, predict triage grades, predict remediation action and suggest similar incidents. The focus of my analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the incident level. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
 
-### Jupyter Notebook
-
-The jupyter notebook used in the analysis is here:
-https://github.com/mgk2014/PCMLAI-CAPSTONE2/blob/main/xdr.ipynb
-
 ### Data Cleaning and Feature Engineering
 
 The following steps were taken to clean the data and engineer new features:
@@ -76,7 +71,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 #### Random Forest Classifier
 
-- The following parameters were used to further train RandomForest model. This resulted in fitting of 270 models
+- The following parameters were used to further train RandomForest model. This parameter grid resulted in fitting of 270 models
     
     rf_grid_params = {'n_estimators': [100, 200, 300],'max_depth': [30, 50, 75],'min_samples_split': [5, 10, 15],'class_weight': ['balanced', None]}
 
@@ -86,7 +81,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - Classification report & Confusion Matrix
 
-    Indicates F1 scores for TP - 71%, FP - 64%, BP - 68%. These may not be high enough for deployment in a SOC environment and suggests further model tuning and exploring alternate models or evaluating data pipeline
+    Indicates F1 scores for TP - 71%, FP - 64%, BP - 68%. These may not be high enough for deployment in a SOC environment and suggests further model tuning, exploring alternate models or evaluating data pipeline
 
     <img src="plots/rf-classificationreport.png" alt="Random Forest" width="400">
 
@@ -94,7 +89,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - ROC/AUC curve
 
-    The model's predictions cover an Area under curve(AUC) of 70% for TP, 73% for FP. Ideally these curves should cover a larger area (90+%) expanding towards the top left of the chart (i.e very low False Positive Rate and High True Positive Rate)
+    The GridSearchCV's best estimator RF model's predictions cover an Area under curve(AUC) of 88% for TP, 82% for FP, and 86% for BP. These scores are better than the RF with default parameters, so we see a slight improvement. These curves should cover an even larger area (90+%) expanding towards the top left of the chart (i.e very low False Positive Rate and High True Positive Rates)
 
     <img src="plots/rf-rocauc.png" alt="ROC-AUC curve" width="500">
 
@@ -102,7 +97,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
     <img src="plots/Top10Features.png" alt="Top 10 features" width="600">
 
-- Further exploration was done with Randomized Search CV (validated 50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
+- Further exploration was done with Randomized Search CV (50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
 
 - To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it shows the contribution of features in prediction for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive, in this example.
 
@@ -125,3 +120,9 @@ Additional feature exploration in data acquisition pipeline, feature engineering
 - Increase the size of data set used in the evaluation to capture more variation and perhaps increase the feature contribution to the target variable
 - Further fine tune the hyper paremeters for the Random Forest
 - Explore other classification models, such as AdaBoost, XGBoost, and dive back into Support Vector Machines and Logistic Regression using better compute resources
+- Evaluate the results further with an XDR and SOC SME. Determine the life-cycle of devices and services and best ways to deploy and update this model
+
+### Jupyter Notebook
+
+The jupyter notebook used in the analysis is here:
+https://github.com/mgk2014/PCMLAI-CAPSTONE2/blob/main/xdr.ipynb
