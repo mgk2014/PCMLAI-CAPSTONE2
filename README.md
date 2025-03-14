@@ -1,12 +1,12 @@
-# PCMLAI-capstone
+# CAPSTONE project
 
-### Alert and Incident Grade prediction in Extended Detection and Response (XDR) solutions
+## Predicting incident grades in Extended Detection and Response (XDR) systems
 
-In the evolving cybersecurity landscape, the increase in threat actors has overwhelmed enterprise security operation centers (SOCs) with incidents. This situation necessitates solutions for immediately classifying alerts and incidents handled in XDR solutions and triggering an appropriate remediation process. However, fully automated systems require a very high confidence threshold to avoid errors due to automated actions, making them often impractical. As a result, SOCs consider building guided response (GR) systems that aid analysts in making informed decisions. These guided response systems require a triaged threat assessment that is then prioritized and fed for further review and action by a SOC analyst.
+In the evolving cybersecurity landscape, the increase in threat actors has overwhelmed enterprise security operation centers (SOCs) with alerts from often hundreds and thousands of devices in their network. This situation necessitates XDR capabilities for immediately classifying these data signals and trigger appropriate actions. However, fully automated systems require a very high confidence threshold to avoid errors due to automated actions, making them often impractical. As a result, SOCs consider building guided response (GR) systems that aid analysts in making informed decisions. These guided response systems require a triaged threat assessment that is then prioritized and fed for further review and action by a SOC analyst.
 
 ### Objective
 
-The primary objective of the exercise is to accurately predict alert and incident triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging labeled responses from SOCs of existing customers. 
+The primary objective of the exercise is to accurately predict alert and incident triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging prior labeled responses from SOCs of existing customers. 
 
 Considering that businesses that rely on 24x7 connectivity, a business impact due to mis-handling of alerts/incidents (either ignored, or bring down services in response to ones that did not need it) could be huge. As such high precision and a high recall is desired on the TP, FP and BP classifications.
 
@@ -14,7 +14,7 @@ Considering that businesses that rely on 24x7 connectivity, a business impact du
 
 The original data set comprises of 13 million pieces of evidence across 33 entity types, covering 1.6 million alerts and 1 million annotated incidents with triage labels from customers over a two-week period. The dataset is built from telemetry from 6100 organizations, using 9100 unique detectors. All data was anonymized. The data is available on Kaggle at https://www.kaggle.com/datasets/Microsoft/microsoft-security-incident-prediction
 
-More information on how this data was prepared, how alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of the initiative was much larger - to co-relate events, predict triage grades, predict a remediation action and suggest similar incidents. The focus of my analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the Incident level. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
+More information on how this data was prepared, alerts were corelated into incidents, can be found in this whitepaper: https://arxiv.org/abs/2407.09017. The scope of the initiative was much larger - co-relate alerts into incidents events, predict triage grades predict a remediation action and suggest similar incidents. The focus of my analysis is alert level triage prediction only. It does not make any specific inferences aggregated at the incident level. Also considering the compute restrictions on a personal laptop this analysis is restricted to 150K train / 150K test samples selected at random. Both train/test data sets were stratified to have an equal distribution across BP, FP and TP classes. 
 
 ### Jupyter Notebook
 
@@ -30,8 +30,8 @@ The following steps were taken to clean the data and engineer new features:
 - Deleted the features that had more than 90% values missing: ResourceType, ThreatFamily, EmailClusterId, Roles, AntispamDirection
 - ActionGrouped, ActionGranular are related to action recommendations post the initial triage. Since this analysis is restricted to triage, these features were dropped
 - Timestamp was converted to Timestamp data type. This feature was not immediately used in the analysis, but may be used for forecasting of alerts
-- MitreTechniques feature was abstracted to the high leave Mitre such as T1078 (account access), ignoring the sub MitreTechniques (ex: T1078.001, T1078.002) recorded in the alerts. SubMitre techniques may be included in further analysis if Mitre is found to be an important feature in the analsys
-- Geo Features such as Country, State were removed in favor of  City feature since City represented by anonymous code 10630 represeted > 99% of the data
+- MitreTechniques feature was abstracted to the high level Mitre such as T1078 (account access), ignoring the sub MitreTechniques (ex: T1078.001, T1078.002) recorded in the alerts. SubMitre techniques may be included in further analysis if Mitre is found to be an important feature in the analsys
+- Geo Features such as Country, State were removed in favor of City feature since City represented by anonymous code 10630 represented > 99% of the data, in the chosen data set
 
 ### Exploratory Data Analysis
 
@@ -56,20 +56,20 @@ Majority of are related to IP and user entities
 
 <img src="plots/EntityTypeDistribution.png" alt="Entity Types" width="500">
 
-All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId, AccountUps. Except AccountsId, other co-related features removed before developing the model
+All numerical features in this dataset represent discrete values. Some of the features appear to be highly correlated for ex: AccountsId, AccountsName, AccountObjectId, AccountUps. Except AccountsId, these other co-related features removed before developing the model
 
 <img src="plots/m_numerical_heatmap.png" alt="Entity Types" width="400">
 
 
 ### Model development - multi-class classification
 
-- Ran Logistic Regression (LR), KNN, DecisionTree (DT), Support Vector Machine (SVM), Random Forest (RF) and GradientBoosting (GB) classifiers with default parameters. LR and SVM executed on smaller data sets (10k rows) but took a long time (> 9-10 hrs) with the 150K train dataset size chosen for this analysis. With the smaller data sets, SVM, LR did not improve upon the scores of the RF classifier. Subsquently, SVM, RF classifiers were removed in the final analysis.
+- Ran Logistic Regression (LR), KNN, DecisionTree (DT), Support Vector Machine (SVM), Random Forest (RF) and GradientBoosting (GB) classifiers with default parameters. LR and SVM executed on smaller data sets (10k rows) but took a long time (> 9-10 hrs) with the 150K train dataset size chosen for this analysis. With the smaller data sets, SVM, LR did not improve upon the scores of the RF classifier. Subsquently, SVM, RF classifiers were removed in this analysis. These may be re-considered with better compute resources.
 
 - KNN, DT, RF and Gradient Boosting classifers with default parameters - Macro Precision, Recall, and F1 scores are recorded in this table
     
     <img src="plots/default-classifiers.png" alt="Default Classifiers" width="600">
 
-    The classification reports, confusion matrices, and ROC-AUC are included in the linked Jupyter Notebook
+    The classification reports, confusion matrices, and ROC-AUC curves are included in the linked Jupyter Notebook
 
 - DecisionTree and RandomForestClassifier registered the highest macro F1 scores. The DecisionTree classifier was the fastest to fit and evaluate, however indicated an over fitting with a tree depth of 86
 
@@ -85,13 +85,11 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
     {'class_weight': 'balanced','max_depth': 30,'min_samples_split': 5,'n_estimators': 200}
 
-- Classification report
+- Classification report & Confusion Matrix
 
-    Indicates F1 scores of TP - 71%, FP - 64%, BP - 68%
+    Indicates F1 scores for TP - 71%, FP - 64%, BP - 68%. These may not be high enough for deployment in a SOC environment and suggests further model tuning and exploring alternate models or evaluating data pipeline
 
     <img src="plots/rf-classificationreport.png" alt="Random Forest" width="400">
-
-- Confusion Matrix
 
     <img src="plots/rf-confusion.png" alt="Confusion Matrix" width="400">
 
@@ -114,11 +112,11 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 ### Conclusion
 
-SOCs demand very high F1 scores before an action may be undertaken by automation or humans. The goal is to catch as many real events (requiring high precision), and not miss any real attacks (high recall i.e. reduce false negatives). The macro F1 scores of 71% for True Positives (TP), 64% for False Positives (FP), 68% for Benign Positives (BP) would not be considered high in SOC environments, and may require a further triage before actions may be taken.
+SOCs requirements for high confidence predictions translate to high F1 (function of Precision and Recall) scores before an action may be undertaken through automation or by humans. The goal is to catch as many real events (requiring high precision), and not miss any real attacks (high recall i.e. reduce false negatives). In the current model, macro F1 scores of 71% for True Positives (TP), 64% for False Positives (FP), 68% for Benign Positives (BP), and Area Under Curve (67-73%) would not be considered high enough, and may require additional triage before an action is taken or suggested.
 
-The model considers account information, ip address, network message Id, Url, and device name as top contributing features i.e. the features that have the most impact on determining whether an alert should be marked as TP, FP or BP. While this is intuitive based on past labeled data, it complicates the deployment of the model as introduction of new devices or services in the network would require periodic revisions (re-fitting) to the model. Additional discussions are needed with an SME to understand the processes within a SOC around user/device life-cycle & introduction of new services.
+The model also considers account information, ip address, network message Id, url, and device name as top contributing features i.e. the features that have the most impact on determining whether an alert should be marked as TP, FP or BP. While this is intuitive based on the labeled data and sources/destination of threats, it also suggests the deployment of this model will require periodic re-fit, based on introduction of new devices or services. Additional discussions are needed with an SME to understand the life-cycle processes within a SOC for new user/device life-cycle &  cloud based services.
 
-Additional feature exploration in data acquisition pipeline, feature engineering work, and model development/tuning is needed to achieve higher F1 (>90%) scores before it may be considered for deployment in a SOC environment.
+Additional feature exploration in data acquisition pipeline, feature engineering work, and model development/tuning is needed to achieve higher F1 (>90%) scores before it may be considered for deployment in a SOC environment and reduce the burden on manual triaging.
 
 ### Next steps
 
@@ -127,4 +125,4 @@ Additional feature exploration in data acquisition pipeline, feature engineering
 - Explore sequential model building - convert the 3 classes into a binary classification problem (TP and Not TP) and evaluate if that improves results for TP. If it does, a 2nd model can be built that predicts for FP vs BP.
 - Increase the size of data set used in the evaluation to capture more variation and perhaps increase the feature contribution to the target variable
 - Further fine tune the hyper paremeters for the Random Forest
-- Explore other classification models, such as AdaBoost, and dive back into Support Vector Machines and Logistic Regression using better compute resources
+- Explore other classification models, such as AdaBoost, XGBoost, and dive back into Support Vector Machines and Logistic Regression using better compute resources
