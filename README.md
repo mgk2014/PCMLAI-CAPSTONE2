@@ -1,4 +1,4 @@
-# CAPSTONE project
+# Capstone
 
 ## Predicting incident grades in Extended Detection and Response (XDR) systems
 
