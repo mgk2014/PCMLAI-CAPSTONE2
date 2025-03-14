@@ -2,13 +2,13 @@
 
 ## Predicting incident grades in Extended Detection and Response (XDR) systems
 
-In the evolving cybersecurity landscape, the increase in threat actors has overwhelmed enterprise security operation centers (SOCs) with alerts from often hundreds and thousands of devices in their network. This situation necessitates XDR capabilities for immediately classifying these data signals and trigger appropriate actions. However, fully automated systems require a very high confidence threshold to avoid errors due to automated actions, making them often impractical. As a result, SOCs consider building guided response (GR) systems that aid analysts in making informed decisions. These guided response systems require a triaged threat assessment that is then prioritized and fed for further review and action by a SOC analyst.
+In the ever evolving cybersecurity landscape, the increase in threat actors has overwhelmed enterprise security operation centers (SOCs) with alerts from often hundreds and thousands of devices in their network. This situation necessitates XDR capabilities for immediately classifying these data signals and trigger appropriate actions. However, fully automated systems require a very high confidence threshold to avoid errors due to automated actions, making them often impractical. As a result, SOCs consider building guided response (GR) systems that aid analysts in making informed decisions. These guided response systems require a triaged threat assessment that is then prioritized and fed for further review and action by a SOC analyst.
 
 ### Objective
 
-The primary objective of the exercise is to accurately predict alert and incident triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging prior labeled responses from SOCs of existing customers. 
+The primary objective of the exercise is to accurately predict alert & incident triage grades as true positive (TP), benign positive (BP), and false positive (FP) — leveraging prior labeled responses from SOCs of existing customers. 
 
-Considering that businesses that rely on 24x7 connectivity, a business impact due to mis-handling of alerts/incidents (either ignored, or bring down services in response to ones that did not need it) could be huge. As such high precision and a high recall is desired on the TP, FP and BP classifications.
+Considering that businesses that rely on 24x7 connectivity, a business impact due to mis-handling of alerts/incidents (either ignored, or bring down services in response to ones that did not need it) could be huge. As such high confidence in predictions is desired for classifying TP, FP and BPs.
 
 ### Data
 
@@ -35,7 +35,7 @@ The following steps were taken to clean the data and engineer new features:
 
 ### Exploratory Data Analysis
 
-Majority of alerts are observed during the Initial Access phase of an attach (46%). Exfiltration category as marked by the detectors appear to have the lowest true positive incident grades
+Majority of alerts are observed during the Initial Access phase of an attack (46%). Exfiltration category as marked by the detectors appear to have the lowest true positive incident grades
 
 <img src="plots/CategoryByIncidentGrade.png" alt="Last Verdict by Incident Grade" width="500">
 
@@ -63,9 +63,9 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 ### Model development - multi-class classification
 
-- Ran Logistic Regression (LR), KNN, DecisionTree (DT), Support Vector Machine (SVM), Random Forest (RF) and GradientBoosting (GB) classifiers with default parameters. LR and SVM executed on smaller data sets (10k rows) but took a long time (> 9-10 hrs) with the 150K train dataset size chosen for this analysis. With the smaller data sets, SVM, LR did not improve upon the scores of the RF classifier. Subsquently, SVM, RF classifiers were removed in this analysis. These may be re-considered with better compute resources.
+- Ran Logistic Regression (LR), KNearest Neighbors (KNN), DecisionTree (DT), Support Vector Machine (SVM), Random Forest (RF) and GradientBoosting (GB) classifiers with default parameters. LR and SVM executed on smaller data sets (10k rows) but took a long time (> 9-10 hrs) with the 150K train dataset size chosen for this analysis. With the smaller data sets, SVM, LR did not improve upon the scores of the RF classifier. Subsquently, SVM, RF classifiers were removed in this analysis. These may be re-considered with better compute resources.
 
-- KNN, DT, RF and Gradient Boosting classifers with default parameters - Macro Precision, Recall, and F1 scores are recorded in this table
+- Macro Precision, Recall, and F1 scores for KNN, DT, RF and Gradient Boosting classifers (with default parameters) are recorded in this table
     
     <img src="plots/default-classifiers.png" alt="Default Classifiers" width="600">
 
@@ -95,7 +95,7 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
 - ROC/AUC curve
 
-    The model's predictions cover an AUC i.e area under curve of 70% for TP, 73% for FP. Ideally these curves should be cover a larger area expanding towards the top left of the chart
+    The model's predictions cover an Area under curve(AUC) of 70% for TP, 73% for FP. Ideally these curves should cover a larger area (90+%) expanding towards the top left of the chart (i.e very low False Positive Rate and High True Positive Rate)
 
     <img src="plots/rf-rocauc.png" alt="ROC-AUC curve" width="500">
 
@@ -103,9 +103,9 @@ All numerical features in this dataset represent discrete values. Some of the fe
 
     <img src="plots/Top10Features.png" alt="Top 10 features" width="600">
 
-- Further exploration was done with Randomized Search CV (50 models) and a new model with top 10 contributing features. The final Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
+- Further exploration was done with Randomized Search CV (validated 50 models), and another model with top 10 contributing features. The Macro F1 scores of these experiments were very similar to results shared here. The details are in the linked Jupyter notebook.
 
-- To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it predicts TP for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive
+- To help understand the contribution of various features to a single prediction, 'waterfall' library were used. Here it shows the contribution of each feature in prediction for a single alert by producing three different probability scores for BP, FP and TP [[0.10477976 0.42804762 0.46717262]] respectively, thus predicting the majority class i.e. True Positive, in this example.
 
     <img src="plots/featurecontributionofprediction.png" alt="Top 10 features" width="500">
 
